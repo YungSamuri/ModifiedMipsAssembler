@@ -3,6 +3,8 @@ import sys
 def main():
     # Defining the assembly file to read from
     filename = "input.asm"
+    if (len(sys.argv) > 1):
+        filename = sys.argv[1]
     
     # Read all lines from the assembly file, and store them in a list
     with open(filename, "r") as infile:
@@ -23,7 +25,7 @@ def main():
     binary = False
     extension = "hex"
     
-    if (len(sys.argv) > 0 and sys.argv[1] == "-b"):
+    if (len(sys.argv) > 2 and sys.argv[2] == "-b"):
         binary = True
         extension = "bin"
         
