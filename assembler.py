@@ -20,16 +20,27 @@ def main():
     # Step 4: Encode the program into a list of binary strings
     encoded_program = encode_program(lines, label_table, data_table)
     
+    binary = False
+    extension = "hex"
+    
+    if (len(sys.argv) > 0 and sys.argv[1] == "-b"):
+        binary = True
+        extension = "bin"
+        
+    
     # Step 5: Convert the strings to hexadecimal and write them to a file
-    hex_program = post_process(encoded_program)
-    with open("output.hex", "w") as outfile:
+    hex_program = post_process(encoded_program, binary)
+    with open(f"output.{extension}", "w") as outfile:
         outfile.write("v3.0 hex words addressed\n00: ")
         outfile.writelines(hex_program)
     
     # Step 6: Convert the data list to hexadecimal and write it to a file
-    with open("data.hex", "w") as outfile:
+    with open(f"data.{extension}", "w") as outfile:
         outfile.write("v3.0 hex words addressed\n00: ")
-        outfile.writelines([f"{int(d):04x} " for d in data_list])
+        if binary:
+            outfile.writelines([f"{int(d):016b} " for d in data_list])
+        else:
+            outfile.writelines([f"{int(d):04x} " for d in data_list])
     
     
 def preprocess_lines(lines):            
@@ -177,11 +188,14 @@ def dec_to_bin(num, digits):
     return f"{(1 << 12) + num:012b}"
 
 
-def post_process(lines):
+def post_process(lines, binary = False):
     ret = []
     for line in lines:
         line = line.replace(" ", "")
-        line = f"{int(line, 2):04x} "
+        if binary:
+            line = f"{int(line, 2):016b} "
+        else:
+            line = f"{int(line, 2):04x} "
         ret.append(line) 
     return ret
 
